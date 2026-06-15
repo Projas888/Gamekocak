@@ -780,7 +780,34 @@ window.addEventListener('mouseup', endDrag);
 card.addEventListener('touchstart', startDrag, {passive: false});
 window.addEventListener('touchmove', onDrag, {passive: false});
 window.addEventListener('touchend', endDrag);
+// =======================================================================
+// FUNGSI WEB API UNTUK MENGIRIM DATA KE GOOGLE SHEETS via GAS
+// =======================================================================
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby-gIMn3-UB9F07r22h-z-D3SYP_WOiMypLAg5WXDdlxmtRR_wSFldYthzH_YNYQrdv/exec";
 
+async function sendGameDataToGoogleSheets(playerData) {
+    try {
+        console.log("Mengirimkan rekaman data ke database Google Sheets...");
+        
+        const response = await fetch(GAS_WEB_APP_URL, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8' // Menghindari preflight CORS issue pada GAS
+            },
+            body: JSON.stringify(playerData)
+        });
+
+        const result = await response.json();
+        if (result.status === "success") {
+            console.log("✅ Sukses! Data pemain telah berhasil dicatat.", result.message);
+        } else {
+            console.error("❌ Gagal mencatat data:", result.message);
+        }
+    } catch (error) {
+        console.error("❌ Terjadi kesalahan jaringan / sistem saat mengirim data:", error);
+    }
+}
 </script>
 </body>
 </html>
